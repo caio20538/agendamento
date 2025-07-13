@@ -1,7 +1,7 @@
 package com.ms.userAuth.service;
 
-import com.ms.userAuth.controller.dto.request.LoginRequest;
-import com.ms.userAuth.controller.dto.response.LoginResponse;
+import com.ms.userAuth.controller.dto.request.UserRequest;
+import com.ms.userAuth.controller.dto.response.UserResponse;
 import com.ms.userAuth.model.UserEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -23,8 +23,8 @@ public class TokenService {
         this.authenticationService = authenticationService;
     }
 
-    public ResponseEntity<LoginResponse> tokenGenerator(LoginRequest loginRequest) {
-        UserEntity user = authenticationService.authenticate(loginRequest);
+    public ResponseEntity<UserResponse> tokenGenerator(UserRequest userRequest) {
+        UserEntity user = authenticationService.authenticate(userRequest);
 
         var now = Instant.now();
         var expiresIn = 300L;
@@ -43,6 +43,6 @@ public class TokenService {
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return ResponseEntity.ok(new LoginResponse(jwtValue, expiresIn));
+        return ResponseEntity.ok(new UserResponse(jwtValue, expiresIn));
     }
 }

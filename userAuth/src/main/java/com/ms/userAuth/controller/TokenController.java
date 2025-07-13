@@ -1,7 +1,7 @@
 package com.ms.userAuth.controller;
 
-import com.ms.userAuth.controller.dto.request.LoginRequest;
-import com.ms.userAuth.controller.dto.response.LoginResponse;
+import com.ms.userAuth.controller.dto.request.UserRequest;
+import com.ms.userAuth.controller.dto.response.UserResponse;
 import com.ms.userAuth.service.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class TokenController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest){
-        return tokenService.tokenGenerator(loginRequest);
+    public ResponseEntity<UserResponse> login(@RequestBody @Valid UserRequest userRequest){
+        return tokenService.tokenGenerator(userRequest);
     }
 
     //implementar os logs

@@ -1,6 +1,6 @@
 package com.ms.userAuth.service;
 
-import com.ms.userAuth.controller.dto.request.LoginRequest;
+import com.ms.userAuth.controller.dto.request.UserRequest;
 import com.ms.userAuth.model.UserEntity;
 import com.ms.userAuth.repository.UserRepository;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,9 +18,9 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserEntity authenticate(LoginRequest loginRequest) {
-        return userRepository.findByEmail(loginRequest.email())
-                .filter(user -> user.isLoginCorrect(loginRequest, passwordEncoder))
+    public UserEntity authenticate(UserRequest userRequest) {
+        return userRepository.findByEmail(userRequest.email())
+                .filter(user -> user.isLoginCorrect(userRequest, passwordEncoder))
                 .orElseThrow(() -> new BadCredentialsException("User or Password is invalid!"));
     }
 }
