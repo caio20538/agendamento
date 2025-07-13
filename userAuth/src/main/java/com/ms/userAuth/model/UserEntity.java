@@ -1,6 +1,6 @@
 package com.ms.userAuth.model;
 
-import com.ms.userAuth.controller.dto.request.LoginRequest;
+import com.ms.userAuth.controller.dto.request.UserRequest;
 import jakarta.persistence.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -60,7 +60,7 @@ public class UserEntity {
         this.roles = roles;
     }
 
-    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(loginRequest.password(), this.password);
+    public boolean isLoginCorrect(UserRequest userRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(userRequest.password(), this.password);
     }
 }
