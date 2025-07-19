@@ -1,4 +1,4 @@
-package com.ms.userAuth.controller.dto;
+package com.ms.userAuth.controller.dto.response;
 
 
 import com.ms.userAuth.model.UserEntity;
