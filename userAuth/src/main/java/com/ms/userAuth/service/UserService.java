@@ -1,7 +1,7 @@
 package com.ms.userAuth.service;
 
 import com.ms.userAuth.controller.dto.CreateUserDTO;
-import com.ms.userAuth.controller.dto.UserResponseDTO;
+import com.ms.userAuth.controller.dto.request.UserUpdateRequest;
 import com.ms.userAuth.model.UserEntity;
 import com.ms.userAuth.model.enums.RoleEnum;
 import com.ms.userAuth.repository.RoleRepository;
@@ -13,11 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,66 +25,68 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final UserValidationService userValidationService;
 
     public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository, UserMapper userMapper) {
+                       RoleRepository roleRepository, UserMapper userMapper, UserValidationService userValidationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
+        this.userValidationService = userValidationService;
     }
 
     @Transactional
     public ResponseEntity<Void> createUser(CreateUserDTO userDTO){
-        validateUserExist(userDTO.email());
+        userValidationService.validateUserExist(userDTO.email());
 
         var customer = roleRepository.findByName(RoleEnum.CUSTOMER);
 
         UserEntity user = userMapper.dtoToEntity(userDTO, customer);
+
+        userRepository.save(user);
 
         return ResponseEntity
                 .created(URI.create("/users/" + user.getUserId()))
                 .build();
     }
 
-    public List<UserResponseDTO> listAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserResponseDTO::fromEntity)
-                .toList();
-    }
-
-
-    private void validateUserExist(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User already exists.");
-        });
-    }
-
     public ResponseEntity<Void> deleteOwnAccount() {
+        UUID userId = getAuthenticatedUser();
+
+        userRepository.deleteById(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    private UUID getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String subject = auth.getName(); // o sub do JWT
 
         UUID userId;
         try {
-            userId = UUID.fromString(subject);
+            return userId = UUID.fromString(subject);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid UUID in token");
         }
 
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
 
-        userRepository.delete(user);
+    private UserEntity getUser(Optional<UserEntity> userRepository) {
+        return userRepository
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @Transactional
+    public ResponseEntity<Void> updateOwnAccount(UserUpdateRequest request){
+        UUID userId = getAuthenticatedUser();
+
+        userRepository.updateUserInfo(userId, request.email(), request.password());
+
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> deleteUserByEmail(String email) {
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        userRepository.delete(user);
-        return ResponseEntity.noContent().build();
-    }
+
+
 
 
 }
