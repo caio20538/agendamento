@@ -22,6 +22,4 @@ public class TokenController {
     public ResponseEntity<UserResponse> login(@RequestBody @Valid UserRequest userRequest){
         return tokenService.tokenGenerator(userRequest);
     }
-
-    //implementar os logs
 }
