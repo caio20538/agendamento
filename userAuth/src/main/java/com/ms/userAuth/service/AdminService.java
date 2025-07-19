@@ -63,7 +63,6 @@ public class AdminService{
     }
 
     public ResponseEntity<Optional<UserEntity>> userFindByEmail(EmailRequest email){
-        //TODO: criar um dto
         return ResponseEntity.ok(userRepository.findByEmail(email.email()));
     }
 
