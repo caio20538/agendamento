@@ -2,7 +2,9 @@ package com.ms.userAuth.model;
 
 import com.ms.userAuth.controller.dto.request.UserRequest;
 import jakarta.persistence.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.UUID;
@@ -73,5 +75,11 @@ public class UserEntity {
 
     public boolean isLoginCorrect(UserRequest userRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(userRequest.password(), this.password);
+    }
+
+    public static void IsUserNotExist(boolean userRepositoryNotExist) {
+        if (userRepositoryNotExist) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
+        }
     }
 }

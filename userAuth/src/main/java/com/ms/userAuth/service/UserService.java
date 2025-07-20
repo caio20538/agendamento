@@ -53,16 +53,10 @@ public class UserService {
     public ResponseEntity<Void> deleteOwnAccount() {
         UUID userId = getAuthenticatedUser();
 
-        IsUserNotExist(!userRepository.existsById(userId));
+        UserEntity.IsUserNotExist(!userRepository.existsById(userId));
 
         userRepository.deleteById(userId);
         return ResponseEntity.noContent().build();
-    }
-
-    private void IsUserNotExist(boolean userRepositoryNotExist) {
-        if (userRepositoryNotExist) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
-        }
     }
 
     private UUID getAuthenticatedUser() {
@@ -84,7 +78,7 @@ public class UserService {
 
         int rowsUpdated = userRepository.updateUserInfo(userId, request.email(), request.password());
 
-        IsUserNotExist(rowsUpdated == 0);
+        UserEntity.IsUserNotExist(rowsUpdated == 0);
 
         return ResponseEntity.noContent().build();
     }
