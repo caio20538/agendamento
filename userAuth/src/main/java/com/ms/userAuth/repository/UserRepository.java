@@ -14,12 +14,8 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByEmail(String email);
 
     @Modifying
-    @Query("DELETE FROM UserEntity where email = :email")
-    void deleteByEmail(@Param("email") String email);
-
-    @Modifying
     @Query("UPDATE UserEntity u SET u.email = :email, u.password = :password WHERE u.id = :id")
-    void updateUserInfo(@Param("id") UUID id, @Param("email") String email, @Param("password") String password);
+    int updateUserInfo(@Param("id") UUID id, @Param("email") String email, @Param("password") String password);
 
     @Modifying
     @Query("UPDATE UserEntity u SET u.email = :newEmail, u.password = :password WHERE u.email = :oldEmail")
