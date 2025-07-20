@@ -22,4 +22,11 @@ public class TokenController {
     public ResponseEntity<UserResponse> login(@RequestBody @Valid UserRequest userRequest){
         return tokenService.tokenGenerator(userRequest);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        // Apenas uma resposta OK para o frontend deletar o token.
+        return ResponseEntity.noContent().build();
+    }
+
 }
