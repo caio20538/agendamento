@@ -17,7 +17,13 @@ public class RoleEntity {
     @Column(length = 20, unique = true, nullable = false)
     private RoleEnum name;
 
+    public RoleEntity(Long roleId, RoleEnum name) {
+        this.roleId = roleId;
+        this.name = name;
+    }
 
+    public RoleEntity() {
+    }
     public Long getRoleId() {
         return roleId;
     }

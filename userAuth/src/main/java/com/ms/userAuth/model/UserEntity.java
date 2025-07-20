@@ -20,6 +20,7 @@ public class UserEntity {
 
     private String password;
 
+    //
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_users_roles",
@@ -27,6 +28,16 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<RoleEntity> roles;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(UUID userId, String email, String password, Set<RoleEntity> roles) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
 
     public UUID getUserId() {
         return userId;
